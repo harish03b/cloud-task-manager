@@ -6,11 +6,15 @@ interface Props {
     id: string,
     completed: boolean
   ) => void;
+  onDelete: (
+    id: string
+  ) => void;
 }
 
 export default function TaskCard({
   task,
   onToggle,
+  onDelete,
 }: Props) {
   return (
     <div className="bg-white rounded-xl shadow p-4">
@@ -33,17 +37,28 @@ export default function TaskCard({
           </span>
         )}
 
-        <button
-          onClick={() =>
-            onToggle(
-              task.id,
-              task.completed
-            )
-          }
-          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
-        >
-          Toggle
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() =>
+              onToggle(
+                task.id,
+                task.completed
+              )
+            }
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
+          >
+            Toggle
+          </button>
+
+          <button
+            onClick={() =>
+              onDelete(task.id)
+            }
+            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+          >
+            Delete
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ export const createTask = async (
 
   return response.data;
 };
+
 export const updateTaskStatus = async (
   id: string,
   completed: boolean
@@ -26,6 +27,16 @@ export const updateTaskStatus = async (
     {
       completed,
     }
+  );
+
+  return response.data;
+};
+
+export const deleteTask = async (
+  id: string
+) => {
+  const response = await api.delete(
+    `/tasks/${id}`
   );
 
   return response.data;

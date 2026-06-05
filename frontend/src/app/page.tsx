@@ -12,6 +12,7 @@ import {
   getTasks,
   createTask,
   updateTaskStatus,
+  deleteTask,
 } from "@/services/taskService";
 
 import { Task } from "@/types/task";
@@ -89,6 +90,25 @@ export default function Home() {
     }
   };
 
+  const handleDelete = async (
+    id: string
+  ) => {
+    try {
+      await deleteTask(id);
+
+      setTasks((prev) =>
+        prev.filter(
+          (task) => task.id !== id
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Failed to delete task:",
+        error
+      );
+    }
+  };
+
   const completedTasks = tasks.filter(
     (task) => task.completed
   ).length;
@@ -139,6 +159,7 @@ export default function Home() {
                 key={task.id}
                 task={task}
                 onToggle={handleToggle}
+                onDelete={handleDelete}
               />
             ))}
           </div>
