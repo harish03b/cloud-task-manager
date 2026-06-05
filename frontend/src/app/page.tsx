@@ -6,8 +6,13 @@ import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
 import StatsCard from "@/components/dashboard/StatsCard";
 import TaskCard from "@/components/dashboard/TaskCard";
+import CreateTaskForm from "@/components/tasks/CreateTaskForm";
 
-import { getTasks } from "@/services/taskService";
+import {
+  getTasks,
+  createTask,
+} from "@/services/taskService";
+
 import { Task } from "@/types/task";
 
 export default function Home() {
@@ -20,7 +25,10 @@ export default function Home() {
         const data = await getTasks();
         setTasks(data);
       } catch (error) {
-        console.error("Failed to fetch tasks:", error);
+        console.error(
+          "Failed to fetch tasks:",
+          error
+        );
       } finally {
         setLoading(false);
       }
@@ -28,6 +36,28 @@ export default function Home() {
 
     fetchTasks();
   }, []);
+
+  const handleCreateTask = async (
+    title: string,
+    description: string
+  ) => {
+    try {
+      const newTask = await createTask(
+        title,
+        description
+      );
+
+      setTasks((prev) => [
+        newTask,
+        ...prev,
+      ]);
+    } catch (error) {
+      console.error(
+        "Failed to create task:",
+        error
+      );
+    }
+  };
 
   const completedTasks = tasks.filter(
     (task) => task.completed
@@ -49,6 +79,10 @@ export default function Home() {
         <Header />
 
         <main className="p-6">
+          <CreateTaskForm
+            onCreate={handleCreateTask}
+          />
+
           <div className="grid md:grid-cols-3 gap-4">
             <StatsCard
               title="Total Tasks"
@@ -62,7 +96,10 @@ export default function Home() {
 
             <StatsCard
               title="Pending"
-              value={tasks.length - completedTasks}
+              value={
+                tasks.length -
+                completedTasks
+              }
             />
           </div>
 
