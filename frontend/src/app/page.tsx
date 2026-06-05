@@ -1,14 +1,45 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
 import StatsCard from "@/components/dashboard/StatsCard";
 import TaskCard from "@/components/dashboard/TaskCard";
 
-import { mockTasks } from "@/constants/mockTasks";
+import { getTasks } from "@/services/taskService";
+import { Task } from "@/types/task";
 
 export default function Home() {
-  const completedTasks = mockTasks.filter(
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const data = await getTasks();
+        setTasks(data);
+      } catch (error) {
+        console.error("Failed to fetch tasks:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTasks();
+  }, []);
+
+  const completedTasks = tasks.filter(
     (task) => task.completed
   ).length;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Loading tasks...
+      </div>
+    );
+  }
 
   return (
     <div className="flex">
@@ -21,7 +52,7 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-4">
             <StatsCard
               title="Total Tasks"
-              value={mockTasks.length}
+              value={tasks.length}
             />
 
             <StatsCard
@@ -31,14 +62,12 @@ export default function Home() {
 
             <StatsCard
               title="Pending"
-              value={
-                mockTasks.length - completedTasks
-              }
+              value={tasks.length - completedTasks}
             />
           </div>
 
           <div className="mt-8 space-y-4">
-            {mockTasks.map((task) => (
+            {tasks.map((task) => (
               <TaskCard
                 key={task.id}
                 task={task}
