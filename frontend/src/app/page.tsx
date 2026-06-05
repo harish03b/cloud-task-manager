@@ -11,6 +11,7 @@ import CreateTaskForm from "@/components/tasks/CreateTaskForm";
 import {
   getTasks,
   createTask,
+  updateTaskStatus,
 } from "@/services/taskService";
 
 import { Task } from "@/types/task";
@@ -54,6 +55,35 @@ export default function Home() {
     } catch (error) {
       console.error(
         "Failed to create task:",
+        error
+      );
+    }
+  };
+
+  const handleToggle = async (
+    id: string,
+    completed: boolean
+  ) => {
+    try {
+      await updateTaskStatus(
+        id,
+        !completed
+      );
+
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === id
+            ? {
+                ...task,
+                completed:
+                  !task.completed,
+              }
+            : task
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Failed to update task:",
         error
       );
     }
@@ -108,6 +138,7 @@ export default function Home() {
               <TaskCard
                 key={task.id}
                 task={task}
+                onToggle={handleToggle}
               />
             ))}
           </div>

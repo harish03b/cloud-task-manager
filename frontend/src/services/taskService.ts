@@ -17,3 +17,16 @@ export const createTask = async (
 
   return response.data;
 };
+export const updateTaskStatus = async (
+  id: string,
+  completed: boolean
+) => {
+  const response = await api.patch(
+    `/tasks/${id}`,
+    {
+      completed,
+    }
+  );
+
+  return response.data;
+};
